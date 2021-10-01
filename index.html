@@ -1,0 +1,60 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script type="text/javascript"
+        src="https://static.asknice.ly/dist/standalone/asknicely-in-app-conversation.js"></script>
+<link href="https://static.asknice.ly/dist/standalone/asknicely-in-app-conversation.css" rel="stylesheet" type="text/css" charset="utf-8">
+
+
+<script>
+  (function(w, d) {
+    askNicelyConversation({
+      config: {
+        domain_key: "padsplit", // Required
+        template_name: "Member CSAT", // Required - the survey template you wish to use
+        alignment: "center", // Optional - "left", "center" or "right"
+        name: w.name, // Optional - but nice to have
+        email: "member@test.com", // Required - if no email, this should be a unique id for this customer in an email-like format. But a real email address is more powerful for follow-ups
+        email_hash: "1fd8229a1284414a7f58a84acf20f3d7f3ad9d4f3fe6988fb0e85caeb63b6f38", // Required - *security hash of this customers email - see below
+        created: w.createdAt, // Highly desired - unix timestamp when this customer joined your service.,
+        sent_from: "mobile",
+        force: true
+      }
+    });
+    if(!'MutationObserver' in w){
+      alert('Does not support mutation observer');
+      w.ReactNativeWebView.postMessage("close!");
+    }
+    let observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.addedNodes) {
+          for (let i = 0; i < mutation.addedNodes.length; i++) {
+            // do things to your newly added nodes here
+            let node = mutation.addedNodes[i];
+            if (node.id === "web_based_survey_popup") {
+              d.getElementsByClassName('web_based_survey_container')[0].style.minHeight = 550;
+              d.getElementsByClassName("web_based_survey_close")[0].onclick = function() {
+                w.ReactNativeWebView.postMessage("close!");
+              };
+            }
+
+          }
+        }
+        if(mutation.removedNodes) {
+          for (let i = 0; i < mutation.removedNodes.length; i++) {
+            // do things to your newly added nodes here
+            let node = mutation.removedNodes[i];
+             if (node.id === "web_based_survey_popup") {
+               w.ReactNativeWebView.postMessage("close!");
+             }
+          }
+        }
+      });
+    });
+
+    observer.observe(d, {
+      childList: true
+      , subtree: true
+      , attributes: false
+      , characterData: false
+    });
+  })(window, document);
+</script>
